@@ -1,0 +1,23 @@
+-----------------------------
+        PRACTIA 1 
+-----------------------------
+
+dnf install gnupg2 -y 
+
+mkdir alfa
+
+cd alfa/
+
+nano coco.txt
+
+gpg2 -c coco.txt
+
+ls 
+
+cat coco.txt.gpg
+
+gpg2 -d coco.txt.gpg
+
+-----------------------------
+       PRACTICA 2 
+-----------------------------
