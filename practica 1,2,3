@@ -94,6 +94,51 @@ sudo firewall-cmd --reload
 # Probar conexión SSH otra vez
 ssh OSVALDO20241589@192.168.1.16
 
+
+-----------------------------
+        PRACTICA 3
+-----------------------------
+
+
 -----------------------------
         PRACTICA 4
 -----------------------------
+
+# Instalar Google Authenticator
+sudo dnf install -y google-authenticator qrencode qrencode-libs
+
+# Ejecutar la configuración del autenticador
+google-authenticator
+
+# (Responder: y, y, y, y para todas las opciones)
+
+# Configurar PAM para SSH
+sudo nano /etc/pam.d/sshd
+
+auth required pam_google_authenticator.so
+
+# Guardar y cerrar
+
+# Configurar SSH para autenticar con código
+sudo nano /etc/ssh/sshd_config
+
+PasswordAuthentication yes
+ChallengeResponseAuthentication yes
+UsePAM yes
+
+# Guardar y cerrar
+
+# Ajustar SELinux y permisos
+sudo semanage fcontext -a -t auth_home_t "/home/OSVALDO20241589(/.*)?"
+sudo restorecon -Rv /home/OSVALDO20241589
+
+sudo chmod 600 /home/OSVALDO20241589/.google_authenticator
+sudo chmod 700 /home/OSVALDO20241589
+sudo chown OSVALDO20241589:OSVALDO20241589 /home/OSVALDO20241589
+
+# Reiniciar servicio SSH
+sudo systemctl restart sshd
+
+# Probar conexión desde Windows
+ssh OSVALDO20241589@IP_DEL_SERVIDOR
+
