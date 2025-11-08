@@ -17,7 +17,83 @@ ls
 cat coco.txt.gpg
 
 gpg2 -d coco.txt.gpg
+-----------------------------
+        PRACTICA 2
+-----------------------------
+
+# Desactivar el firewall por defecto
+sudo systemctl stop firewalld
+sudo systemctl status firewalld
+
+# Usar iptables para bloquear los puertos 80 (HTTP), 21 (FTP) y 22 (SSH)
+
+# Eliminar reglas que permiten conexiones a esos puertos (si existen)
+sudo iptables -D INPUT -p tcp --dport 80 -j ACCEPT
+sudo iptables -D INPUT -p tcp --dport 21 -j ACCEPT
+sudo iptables -D INPUT -p tcp --dport 22 -j ACCEPT
+
+# Agregar reglas para rechazar tráfico en esos puertos
+sudo iptables -A INPUT -p tcp --dport 80 -j REJECT
+sudo iptables -A INPUT -p tcp --dport 21 -j REJECT
+sudo iptables -A INPUT -p tcp --dport 22 -j REJECT
+
+# Verificar con nmap que los puertos estén cerrados
+nmap -p 80,21,22 192.168.1.14
+
+# Para habilitar nuevamente los puertos, eliminamos las reglas REJECT
+sudo iptables -D INPUT -p tcp --dport 80 -j REJECT
+sudo iptables -D INPUT -p tcp --dport 21 -j REJECT
+sudo iptables -D INPUT -p tcp --dport 22 -j REJECT
+
+# Luego agregamos reglas para aceptar el tráfico en esos puertos
+sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 21 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+# Verificar nuevamente con nmap
+nmap -p 80,21,22 192.168.1.14
+
+# --------------------------------------------------------------
+# Método 2: Usando firewall-cmd (firewalld)
+# --------------------------------------------------------------
+
+# Activar el firewall
+sudo systemctl start firewalld.service
+sudo systemctl status firewalld
+
+# Cerrar tráfico a los servicios HTTP, FTP y SSH
+sudo firewall-cmd --permanent --remove-service=http
+sudo firewall-cmd --permanent --remove-service=ftp
+sudo firewall-cmd --permanent --remove-service=ssh
+
+# Aplicar cambios
+sudo firewall-cmd --reload
+
+# Verificar con nmap que los puertos estén cerrados
+nmap -p 80,21,22 192.168.1.14
+
+# --------------------------------------------------------------
+# Probar conexión SSH (desde otra máquina)
+# --------------------------------------------------------------
+
+ssh OSVALDO20241589@192.168.1.16
+
+# No debería permitir conexión (porque el puerto SSH está bloqueado)
+
+# --------------------------------------------------------------
+# Volver a habilitar los puertos
+# --------------------------------------------------------------
+
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=ftp
+sudo firewall-cmd --permanent --add-service=ssh
+
+# Aplicar cambios nuevamente
+sudo firewall-cmd --reload
+
+# Probar conexión SSH otra vez
+ssh OSVALDO20241589@192.168.1.16
 
 -----------------------------
-       PRACTICA 2 
+        PRACTICA 4
 -----------------------------
